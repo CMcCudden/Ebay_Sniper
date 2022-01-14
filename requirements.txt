@@ -1,0 +1,7 @@
+pip~=21.1.2
+wheel~=0.36.2
+cryptography~=36.0.1
+setuptools~=57.0.0
+requests~=2.27.1
+beautifulsoup4~=4.10.0
+selenium~=4.1.0
