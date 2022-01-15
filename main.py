@@ -17,7 +17,7 @@ header = {
 }
 
 itemurl= 'insert the url of the item you want here'
-maxbid = "ENTER THE MAX AMOUNT YOU'D BE WILLING TO SPEND AS INT OR FLOAT"
+MAXBID = "ENTER THE MAX AMOUNT YOU'D BE WILLING TO SPEND AS INT OR FLOAT"
 timeleft = "ENTER A WHOLE NUMBER INT FOR HOW MANY MINUTES YOU'DLIKE THE BOT TO WATCH THE AUCTION FOR YOU"
 
 now = datetime.datetime.now()
@@ -69,25 +69,34 @@ time.sleep(2)
 
 
 def bid():
-    current_bid = soup.find("span", id="w1-19-_mtb").text.replace("Enter US $", "").replace(" or more", "")
-    bid = float(current_bid)
-    print(bid)
-    while bid <= maxbid:
+    def get_current_bid():
+        current_bid = soup.find("span", id="w1-19-_mtb").text.replace("Enter US $", "").replace(" or more", "")
+        bid = float(current_bid)
+        print(bid)
+    while bid <= MAXBID:
+        get_current_bid()
         new_bid = bid + 1
         driver.find_element(By.ID, "MaxBidId").send_keys(new_bid)
         driver.find_element(By.CLASS_NAME, "btn btn-prim  vi-VR-btnWdth-L vilens-item").click()
         time.sleep(1.5)
         driver.find_element(By.CLASS_NAME, "button-placebid").click()
         time.sleep(1)
-        if driver.find_element(By.CLASS_NAME, "button-placebid"):
+        if driver.find_element(By.CLASS_NAME, "app-bidlayer-main-wrapper"):
             detected = True
             while detected is True:
-                winning_bid = driver.find_element(By.CLASS_NAME, "ui-text-span__BOLD").replace("US $", "")
-                bid = float(winning_bid)
-                new_bid = bid + 1
-                driver.find_element(By.ID, "app-bidlayer-bidsection-input").send_keys(new_bid)
-                driver.find_element(By.CLASS_NAME, "button-placebid").click()
-                time.sleep(1)
+                if bid > MAXBID:
+                    detected = False
+                    driver.find_element((By.CLASS_NAME, "icon icon--close"))
+                    print("Bidding has exceeded your maximum price.")
+                    driver.close()
+                else:
+                    winning_bid = driver.find_element(By.CLASS_NAME, "ui-text-span__BOLD").replace("US $", "")
+                    bid = float(winning_bid)
+                    new_bid = bid + 1
+                    driver.find_element(By.ID, "app-bidlayer-bidsection-input").send_keys(new_bid)
+                    driver.find_element(By.CLASS_NAME, "button-placebid").click()
+                    time.sleep(1)
+
     else:
         print("Bidding has exceeded your maximum price.")
         driver.close()
